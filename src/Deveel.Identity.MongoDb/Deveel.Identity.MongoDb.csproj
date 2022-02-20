@@ -3,6 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Deveel</RootNamespace>
+    <PackageId>Deveel.Identity.MongoDb</PackageId>
+    <Title>Microsoft Identity Framework MongoDB Storage</Title>
+    <Authors>antonello</Authors>
     <Company>Deveel</Company>
     <Description>An implementation of the storage layer of the Microsoft Identity Core framework that targets MongoDb</Description>
     <Copyright>(C) 2022 Deveel</Copyright>
@@ -10,7 +13,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/deveel/deveel.identity.mongodb</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>identity core microsoft mongo mongodb store storage user role</PackageTags>
+    <PackageTags>identity core microsoft aspnetcore aspnet mongo mongodb store storage user role</PackageTags>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression> Apache-2.0</PackageLicenseExpression>
     <PackageIcon>deveel-logo.png</PackageIcon>

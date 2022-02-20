@@ -1,6 +1,6 @@
 # Deveel Identity - MongoDB
 
-[![Build](https://github.com/deveel/deveel.identity.mongodb/actions/workflows/cd.yml/badge.svg)](https://github.com/deveel/deveel.identity.mongodb/actions/workflows/cd.yml) [![Code Coverage](https://codecov.io/gh/deveel/deveel.identity.mongodb/branch/master/graph/badge.svg?token=LZQLJ7NVHS)](https://codecov.io/gh/deveel/deveel.identity.mongodb) [![Maintainability](https://api.codeclimate.com/v1/badges/8228ab5c8ef87d708982/maintainability)](https://codeclimate.com/github/deveel/deveel.identity.mongodb/maintainability)
+[![Build](https://github.com/deveel/deveel.identity.mongodb/actions/workflows/cd.yml/badge.svg)](https://github.com/deveel/deveel.identity.mongodb/actions/workflows/cd.yml) [![Code Coverage](https://codecov.io/gh/deveel/deveel.identity.mongodb/branch/master/graph/badge.svg?token=LZQLJ7NVHS)](https://codecov.io/gh/deveel/deveel.identity.mongodb) [![Maintainability](https://api.codeclimate.com/v1/badges/8228ab5c8ef87d708982/maintainability)](https://codeclimate.com/github/deveel/deveel.identity.mongodb/maintainability) ![Nuget](https://img.shields.io/nuget/dt/deveel.identity.mongodb?color=blue&label=NuGet&logo=nuget&style=flat)
 
 This is an implementation of the storage layer of the [Microsoft Identity](https://github.com/dotnet/aspnetcore/tree/main/src/Identity) framework that supports [MongoDB](https://mongodb.com) as persistent database system.
 
