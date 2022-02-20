@@ -1,0 +1,42 @@
+name: .NET
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+        
+    - name: Add Deveel GitHub NuGet Source
+      run: dotnet nuget add source "https://nuget.pkg.github.com/deveel/index.json" -n "Deveel GitHub" -u ${{ secrets.DEVEEL_NUGET_USER }} -p ${{ secrets.DEVEEL_NUGET_TOKEN }} --store-password-in-clear-text
+      
+    - name: Restore dependencies
+      run: dotnet restore -c Release
+      
+    - name: Build
+      run: dotnet build --no-restore -c Release
+      
+    - name: Test
+      run: dotnet test --no-build --verbosity normal -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Exclude="[*.XUnit]*"
+      
+    - name: Collect to Codecov
+      uses: codecov/codecov-action@v2.1.0
+      with:
+        token: ${{ secrets.REPO_CODECOV_TOKEN }}
+
+    - name: Pack
+      run: dotnet pack --configuration Release --no-restore --no-build --include-symbols --version-suffix $GITHUB_RUN_ID --output ./nuget
+    
+    - name: Push Packages to GitHub NuGet  
+      run: dotnet nuget push ./nuget/**/*.nupkg --skip-duplicate --api-key ${{secrets.GITHUB_TOKEN}} --source "Deveel GitHub"
