@@ -1,4 +1,18 @@
-﻿using System;
+﻿// Copyright 2022 Deveel
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -22,11 +36,11 @@ namespace Deveel.Security {
 		public MongoDbRoleStore(IOptions<MongoDbStoreOptions> options) : base(options) {
 		}
 
-		public MongoDbRoleStore(IOptions<MongoDbStoreOptions> options, ILogger<MongoDbRoleStore<TRole>> logger) 
+		public MongoDbRoleStore(IOptions<MongoDbStoreOptions> options, ILogger<MongoDbRoleStore<TRole>> logger)
 			: base(options, logger) {
 		}
 
-		public MongoDbRoleStore(MongoDbStoreOptions options, ILogger<MongoDbRoleStore<TRole>> logger) 
+		public MongoDbRoleStore(MongoDbStoreOptions options, ILogger<MongoDbRoleStore<TRole>> logger)
 			: base(options, logger) {
 		}
 
@@ -43,10 +57,10 @@ namespace Deveel.Security {
 		private async Task<TRole> FindAsync(FilterDefinition<TRole> filter, CancellationToken cancellationToken) {
 			ThrowIfDisposed();
 			cancellationToken.ThrowIfCancellationRequested();
-			
+
 			try {
 				Trace("Trying to find a role in");
-				
+
 				var options = new FindOptions<TRole, TRole> { Limit = 1 };
 				var result = await Collection.FindAsync(NormalizeFilter(filter), options, cancellationToken);
 
@@ -88,9 +102,9 @@ namespace Deveel.Security {
 			} catch (Exception ex) {
 				Error(ex, "Could not create a new role in");
 
-				return IdentityResult.Failed(new IdentityError { 
-					Code = MongoDbStoreErrorCodes.UnknownError, 
-					Description = "The storage system failed persisting the role" 
+				return IdentityResult.Failed(new IdentityError {
+					Code = MongoDbStoreErrorCodes.UnknownError,
+					Description = "The storage system failed persisting the role"
 				});
 			}
 		}
@@ -127,7 +141,7 @@ namespace Deveel.Security {
 
 				return IdentityResult.Success;
 			} catch (Exception ex) {
-				Error(ex, "The role with ID '{UserId}' was not updated in",role.Id);
+				Error(ex, "The role with ID '{UserId}' was not updated in", role.Id);
 
 				return IdentityResult.Failed(new IdentityError {
 					Code = MongoDbStoreErrorCodes.UnknownError,
@@ -172,10 +186,10 @@ namespace Deveel.Security {
 
 		}
 
-		public Task<string> GetRoleIdAsync(TRole role, CancellationToken cancellationToken) 
+		public Task<string> GetRoleIdAsync(TRole role, CancellationToken cancellationToken)
 			=> GetAsync(() => role.Id == ObjectId.Empty ? null : role.Id.ToString(), cancellationToken);
 
-		public Task<string> GetRoleNameAsync(TRole role, CancellationToken cancellationToken) 
+		public Task<string> GetRoleNameAsync(TRole role, CancellationToken cancellationToken)
 			=> GetAsync(() => role.Name, cancellationToken);
 
 		public Task SetRoleNameAsync(TRole role, string roleName, CancellationToken cancellationToken)
@@ -184,7 +198,7 @@ namespace Deveel.Security {
 		public Task<string> GetNormalizedRoleNameAsync(TRole role, CancellationToken cancellationToken)
 			=> GetAsync(() => role.NormalizedName, cancellationToken);
 
-		public Task SetNormalizedRoleNameAsync(TRole role, string normalizedName, CancellationToken cancellationToken) 
+		public Task SetNormalizedRoleNameAsync(TRole role, string normalizedName, CancellationToken cancellationToken)
 			=> SetAsync(() => role.NormalizedName = normalizedName, cancellationToken);
 
 		public async Task<TRole> FindByIdAsync(string roleId, CancellationToken cancellationToken) {
@@ -203,7 +217,7 @@ namespace Deveel.Security {
 		}
 
 		public Task<IList<Claim>> GetClaimsAsync(TRole role, CancellationToken cancellationToken)
-			=> GetAsync(() => (IList<Claim>) role.Claims?.Select(x => x.ToClaim()).ToList(), cancellationToken);
+			=> GetAsync(() => (IList<Claim>)role.Claims?.Select(x => x.ToClaim()).ToList(), cancellationToken);
 
 		public Task AddClaimAsync(TRole role, Claim claim, CancellationToken cancellationToken)
 			=> SetAsync(() => {

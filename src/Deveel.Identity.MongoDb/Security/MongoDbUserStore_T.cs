@@ -1,9 +1,22 @@
-﻿using System;
+﻿// Copyright 2022 Deveel
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Claims;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,8 +28,8 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Deveel.Security {
-	public class MongoDbUserStore<TUser>: MongoDbStoreBase<TUser>, 
-		IQueryableUserStore<TUser>, 
+	public class MongoDbUserStore<TUser> : MongoDbStoreBase<TUser>,
+		IQueryableUserStore<TUser>,
 		IProtectedUserStore<TUser>,
 		IUserPasswordStore<TUser>,
 		IUserEmailStore<TUser>,
@@ -30,20 +43,20 @@ namespace Deveel.Security {
 		IUserClaimStore<TUser>,
 		IUserAuthenticationTokenStore<TUser>,
 		IUserAuthenticatorKeyStore<TUser>
-		where TUser : MongoUser  {
-		public MongoDbUserStore(IOptions<MongoDbStoreOptions> options, ILogger<MongoDbUserStore<TUser>> logger) 
+		where TUser : MongoUser {
+		public MongoDbUserStore(IOptions<MongoDbStoreOptions> options, ILogger<MongoDbUserStore<TUser>> logger)
 			: base(options, logger) {
 		}
 
-		public MongoDbUserStore(IOptions<MongoDbStoreOptions> options) 
+		public MongoDbUserStore(IOptions<MongoDbStoreOptions> options)
 			: base(options) {
 		}
 
-		public MongoDbUserStore(MongoDbStoreOptions options, ILogger<MongoDbUserStore<TUser>> logger) 
+		public MongoDbUserStore(MongoDbStoreOptions options, ILogger<MongoDbUserStore<TUser>> logger)
 			: base(options, logger) {
 		}
 
-		public MongoDbUserStore(MongoDbStoreOptions options) 
+		public MongoDbUserStore(MongoDbStoreOptions options)
 			: base(options) {
 		}
 
@@ -113,7 +126,7 @@ namespace Deveel.Security {
 			=> GetAsync(() => user.NormalizedName, cancellationToken);
 
 		public virtual Task<string> GetUserIdAsync(TUser user, CancellationToken cancellationToken)
-			=> GetAsync(() => user.Id == ObjectId.Empty ? (string) null : user.Id.ToString(), cancellationToken);
+			=> GetAsync(() => user.Id == ObjectId.Empty ? (string)null : user.Id.ToString(), cancellationToken);
 
 		public virtual Task<string> GetUserNameAsync(TUser user, CancellationToken cancellationToken)
 			=> GetAsync(() => user.Name, cancellationToken);
@@ -147,15 +160,15 @@ namespace Deveel.Security {
 			} catch (Exception ex) {
 				Error(ex, "Could not create a new user in");
 
-				return IdentityResult.Failed(new IdentityError { 
-					Code = MongoDbStoreErrorCodes.UnknownError, 
+				return IdentityResult.Failed(new IdentityError {
+					Code = MongoDbStoreErrorCodes.UnknownError,
 					Description = "The storage system failed persisting the user"
 				});
 			}
 		}
 
 		public virtual async Task<IdentityResult> DeleteAsync(TUser user, CancellationToken cancellationToken) {
-			if (user is null) 
+			if (user is null)
 				throw new ArgumentNullException(nameof(user));
 
 			ThrowIfDisposed();
@@ -182,8 +195,8 @@ namespace Deveel.Security {
 			} catch (Exception ex) {
 				Error(ex, "The user '{UserId}' was not deleted from", user.Id);
 
-				return IdentityResult.Failed(new IdentityError { 
-					Code = MongoDbStoreErrorCodes.UnknownError, 
+				return IdentityResult.Failed(new IdentityError {
+					Code = MongoDbStoreErrorCodes.UnknownError,
 					Description = "Could not delete the user from the storage system"
 				});
 			}
@@ -330,7 +343,7 @@ namespace Deveel.Security {
 					user.Logins = new List<MongoUserLogin>();
 
 				if (!user.Logins.Any(x => x
-					.Provider == login.LoginProvider && 
+					.Provider == login.LoginProvider &&
 					x.LoginKey == login.ProviderKey)) {
 					user.Logins.Add(new MongoUserLogin {
 						LoginKey = login.ProviderKey,
@@ -342,8 +355,8 @@ namespace Deveel.Security {
 
 		public virtual Task RemoveLoginAsync(TUser user, string loginProvider, string providerKey, CancellationToken cancellationToken)
 			=> SetAsync(() => {
-				var login = user.Logins?.FirstOrDefault(x => 
-				x.Provider == loginProvider && 
+				var login = user.Logins?.FirstOrDefault(x =>
+				x.Provider == loginProvider &&
 				x.LoginKey == providerKey);
 
 				if (login != null && user.Logins != null)
@@ -352,7 +365,7 @@ namespace Deveel.Security {
 
 		public virtual Task<IList<UserLoginInfo>> GetLoginsAsync(TUser user, CancellationToken cancellationToken)
 			=> GetAsync(() => {
-				return (IList<UserLoginInfo>) user.Logins?
+				return (IList<UserLoginInfo>)user.Logins?
 					.Select(x => new UserLoginInfo(x.Provider, x.LoginKey, x.ProviderDisplayName))
 					.ToList();
 			}, cancellationToken);
@@ -360,7 +373,7 @@ namespace Deveel.Security {
 		public virtual Task<TUser> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken) {
 			Trace("Trying to find a user for the login '{LoginProvider}'", loginProvider);
 
-			var filter = Builders<TUser>.Filter.ElemMatch(user => user.Logins, 
+			var filter = Builders<TUser>.Filter.ElemMatch(user => user.Logins,
 				login => login.Provider == loginProvider && login.LoginKey == providerKey);
 
 			return FindUserAsync(filter, cancellationToken);
@@ -377,7 +390,7 @@ namespace Deveel.Security {
 
 				user.Tokens.Add(new MongoUserToken {
 					Provider = loginProvider,
-					Token=value,
+					Token = value,
 					TokenName = name
 				});
 			}, cancellationToken);
@@ -389,7 +402,7 @@ namespace Deveel.Security {
 					user.Tokens.Remove(token);
 			}, cancellationToken);
 
-		public virtual Task<string> GetTokenAsync(TUser user, string loginProvider, string name, CancellationToken cancellationToken) 
+		public virtual Task<string> GetTokenAsync(TUser user, string loginProvider, string name, CancellationToken cancellationToken)
 			=> GetAsync(() => {
 				var token = user.Tokens?.Find(x => x.Provider == loginProvider && x.TokenName == name);
 				if (token != null)
@@ -418,9 +431,9 @@ namespace Deveel.Security {
 			}, cancellationToken);
 
 		public virtual Task<IList<string>> GetRolesAsync(TUser user, CancellationToken cancellationToken)
-			=> GetAsync(() => (IList<string>) user.Roles, cancellationToken);
+			=> GetAsync(() => (IList<string>)user.Roles, cancellationToken);
 
-		public virtual Task<bool> IsInRoleAsync(TUser user, string roleName, CancellationToken cancellationToken) 
+		public virtual Task<bool> IsInRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
 			=> GetAsync(() => user.Roles?.Contains(roleName) ?? false, cancellationToken);
 
 		public virtual Task<IList<TUser>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken) {
@@ -466,7 +479,7 @@ namespace Deveel.Security {
 		#region Claims
 
 		public virtual Task<IList<Claim>> GetClaimsAsync(TUser user, CancellationToken cancellationToken)
-			=> GetAsync(() => (IList<Claim>) user.Claims?.Select(x => x.ToClaim()).ToList(), cancellationToken);
+			=> GetAsync(() => (IList<Claim>)user.Claims?.Select(x => x.ToClaim()).ToList(), cancellationToken);
 
 		public virtual Task AddClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
 			=> SetAsync(() => {
@@ -490,7 +503,7 @@ namespace Deveel.Security {
 				user.Claims.Add(MongoClaim.Create(newClaim));
 			}, cancellationToken);
 
-		public virtual Task RemoveClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken) 
+		public virtual Task RemoveClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
 			=> SetAsync(() => {
 				foreach (var claim in claims) {
 					var oldClaim = user.Claims?.Find(c => c.Type == claim.Type);
@@ -503,7 +516,7 @@ namespace Deveel.Security {
 		public virtual Task<IList<TUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken) {
 			Trace("Trying to find all users for claim '{ClaimType}' with value '{ClaimValue}' in", claim.Type, claim.Value);
 
-			var filter = Builders<TUser>.Filter.ElemMatch(user => user.Claims, 
+			var filter = Builders<TUser>.Filter.ElemMatch(user => user.Claims,
 				c => c.Type == claim.Type && c.Value == claim.Value);
 
 			return FindAllAsync(filter, cancellationToken);

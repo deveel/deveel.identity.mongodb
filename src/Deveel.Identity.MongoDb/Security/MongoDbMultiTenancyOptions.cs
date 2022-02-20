@@ -15,11 +15,11 @@
 using System;
 
 namespace Deveel.Security {
-	public class MongoUserLogin {
-		public string Provider { get; set; }
+	public class MongoDbMultiTenancyOptions {
+		public MultiTenancyHandling Handling { get; set; } = MultiTenancyHandling.None;
 
-		public string ProviderDisplayName { get; set; }
+		public string DatabaseFormat { get; set; } = "{tenant}_{database}";
 
-		public string LoginKey { get; set; }
+		public string CollectionFormat { get; set; } = "{tenant}_{collection}";
 	}
 }

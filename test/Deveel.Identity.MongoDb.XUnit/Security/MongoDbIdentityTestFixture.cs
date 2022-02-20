@@ -36,27 +36,28 @@ namespace Deveel.Security {
 
 		private IServiceProvider BuildServiceProvider() {
 			var services = new ServiceCollection()
-				.AddMongoIdentityStores(options => {
-					options.ConnectionString = mongo.ConnectionString;
-					options.DatabaseName = DatabaseName;
-					options.UsersCollection = UsersCollectionName;
-					options.RolesCollection = RolesCollectionName;
-				})
-				.AddMongoIdentityMultiTenancy(options => {
-					options.ConnectionString = mongo.ConnectionString;
-					options.DatabaseName = DatabaseName;
-					options.UsersCollection = UsersCollectionName;
-					options.RolesCollection = RolesCollectionName;
-					options.MultiTenancy.Handling = MultiTenancyHandling.TenantField;
-				})
+				//.AddMongoIdentityMultiTenancy(options => {
+				//	options.ConnectionString = mongo.ConnectionString;
+				//	options.DatabaseName = DatabaseName;
+				//	options.UsersCollection = UsersCollectionName;
+				//	options.RolesCollection = RolesCollectionName;
+				//	options.MultiTenancy.Handling = MultiTenancyHandling.TenantField;
+				//})
 				.AddLogging(logging => logging.SetMinimumLevel(LogLevel.Trace).AddXUnit(outputHelper));
 
 			services.AddIdentityCore<MongoUser>(options => {
 				options.User.RequireUniqueEmail = true;
 				options.Lockout.MaxFailedAccessAttempts = 2;
 			})
-			.AddMongoUserStore()
-			.AddMongoRoleStore()
+				.AddMongoMultiTenancy(options => {
+					options.Handling = MultiTenancyHandling.TenantField;
+				})
+				.AddMongoStores(options => {
+					options.ConnectionString = mongo.ConnectionString;
+					options.DatabaseName = DatabaseName;
+					options.UsersCollection = UsersCollectionName;
+					options.RolesCollection = RolesCollectionName;
+				})
 			.AddTokenProvider<TestEmailTwoFactorAuthentication<MongoUser>>("Default")
 			.AddTokenProvider<TestPhoneTwoFactorAuthentication<MongoUser>>("Phone");
 
