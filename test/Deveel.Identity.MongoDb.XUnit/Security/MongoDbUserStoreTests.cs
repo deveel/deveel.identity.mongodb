@@ -172,6 +172,21 @@ namespace Deveel.Security {
 		}
 
 		[Fact]
+		public async Task QueryAllUsers() {
+			var user1 = await TestFixture.CreateUser("testUser", "test@example.com");
+			var user2 = await TestFixture.CreateUser("test2", "tester2@example.com");
+
+			var users = UserManager.Users.ToList();
+
+			Assert.NotNull(users);
+			Assert.NotEmpty(users);
+			Assert.Equal(2, users.Count);
+
+			Assert.Equal(user1.Name, users[0].Name);
+			Assert.Equal(user2.Name, users[1].Name);
+		}
+
+		[Fact]
 		public async Task FindByEmailExistingUser() {
 			var user = await TestFixture.CreateUser("testUser", "test@example.com");
 

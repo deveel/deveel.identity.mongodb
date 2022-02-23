@@ -91,6 +91,38 @@ namespace Deveel.Security {
 			Assert.NotNull(existing);
 		}
 
+		[Fact]
+		public async Task QueryTenantUsers() {
+			var user1 = await TestFixture.CreateUser("testUser", "test@example.com", u => u.TenantId = TenantId);
+			var user2 = await TestFixture.CreateUser("tester2", "test2@example.com", u => u.TenantId = TenantId);
+
+			var users = TenantUserManager.Users.ToList();
+
+			Assert.NotNull(users);
+			Assert.NotEmpty(users);
+			Assert.Equal(2, users.Count);
+
+			Assert.Equal(user1.Name, users[0].Name);
+			Assert.Equal(user2.Name, users[1].Name);
+		}
+
+		[Fact]
+		public async Task QueryUsersFromTenant() {
+			var user1 = await TestFixture.CreateUser("testUser", "test@example.com", u => u.TenantId = TenantId);
+			var user2 = await TestFixture.CreateUser("tester2", "test2@example.com", u => u.TenantId = TenantId);
+
+			var user3 = await TestFixture.CreateUser("test3", "tes@sample.com", u => u.TenantId = Guid.NewGuid().ToString("N"));
+
+			var users = TenantUserManager.Users.ToList();
+
+			Assert.NotNull(users);
+			Assert.NotEmpty(users);
+			Assert.Equal(2, users.Count);
+
+			Assert.Equal(user1.Name, users[0].Name);
+			Assert.Equal(user2.Name, users[1].Name);
+		}
+
 		public void Dispose() {
 			TestFixture.TestDisposed();
 		}

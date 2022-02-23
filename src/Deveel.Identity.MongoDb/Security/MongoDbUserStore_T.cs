@@ -62,7 +62,17 @@ namespace Deveel.Security {
 
 		protected override string CollectionName => Options.UsersCollection;
 
-		public virtual IQueryable<TUser> Users => Collection.AsQueryable<TUser>();
+		public virtual IQueryable<TUser> Users => GetQueryableStore();
+
+		private IQueryable<TUser> GetQueryableStore() {
+			IQueryable<TUser> query = Collection.AsQueryable<TUser>();
+
+			if (Options.HasTenantSet) {
+				query = query.Where(x => x.TenantId == Options.TenantId);
+			}
+
+			return query;
+		}
 
 		private async Task<IList<TUser>> FindAllAsync(FilterDefinition<TUser> filter, CancellationToken cancellationToken) {
 			ThrowIfDisposed();
