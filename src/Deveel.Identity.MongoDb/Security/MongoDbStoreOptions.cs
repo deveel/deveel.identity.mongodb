@@ -24,6 +24,7 @@ namespace Deveel.Security {
 			DatabaseName = options.DatabaseName;
 			RolesCollection = options.RolesCollection;
 			UsersCollection = options.UsersCollection;
+			UseServerApiV1 = options.UseServerApiV1;
 		}
 
 		public string TenantId { get; set; }

@@ -23,5 +23,7 @@ namespace Deveel.Security {
 		public string RolesCollection { get; set; } = "roles";
 
 		public string UsersCollection { get; set; } = "users";
+
+		public bool UseServerApiV1 { get; set; } = false;
 	}
 }

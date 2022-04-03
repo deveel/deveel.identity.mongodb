@@ -60,7 +60,12 @@ namespace Deveel.Security {
 				if (String.IsNullOrWhiteSpace(Options.ConnectionString))
 					throw new MongoConfigurationException("The connection string was not set");
 
-				return new MongoClient(Options.ConnectionString);
+				var settings = MongoClientSettings.FromConnectionString(Options.ConnectionString);
+
+				if (Options.UseServerApiV1)
+					settings.ServerApi = new ServerApi(ServerApiVersion.V1);
+
+				return new MongoClient(settings);
 			}
 		}
 
